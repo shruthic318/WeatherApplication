@@ -51,7 +51,7 @@ def live_updates():
     consumer = KafkaConsumer(
         'global_weather',
         bootstrap_servers='b-1.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092,b-2.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092',
-        auto_offset_reset='earliest',
+        auto_offset_reset='earliest',group_id='weatergroup',
         enable_auto_commit=False,
         value_deserializer=lambda x: json.loads(x.decode('utf-8'))
     )
