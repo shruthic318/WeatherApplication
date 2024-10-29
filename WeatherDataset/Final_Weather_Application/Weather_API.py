@@ -10,7 +10,7 @@ import threading
 app = Flask(__name__)
 
 # Load cleaned data
-filepath = os.path.join(os.path.dirname(__file__), 'WeatherDataset/Data Analysis/Output/Cleaned_Data.csv')
+filepath = os.path.join(os.path.dirname(__file__), '..', 'Data Analysis', 'Output', 'Cleaned_Data.csv')
 weather_data = pd.read_csv(filepath)
 
 # Kafka Producer setup
