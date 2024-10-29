@@ -6,7 +6,6 @@ import pandas as pd
 from kafka import KafkaProducer, KafkaConsumer
 import json
 import threading
-import queue
 
 app = Flask(__name__)
 
@@ -21,9 +20,6 @@ producer = KafkaProducer(
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
-# Queue to store messages consumed from Kafka
-message_queue = queue.Queue()
-
 # Function to stream data to Kafka
 def stream_data_to_kafka():
 
@@ -36,23 +32,6 @@ def stream_data_to_kafka():
 # Start streaming data to Kafka in a separate thread
 def start_streaming():
     threading.Thread(target=stream_data_to_kafka).start()
-
-# Function to consume messages from Kafka
-def consume_messages():
-    consumer = KafkaConsumer(
-        'global_weather',
-        bootstrap_servers='b-1.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092,b-2.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092',
-        value_deserializer=lambda x: json.loads(x.decode('utf-8')),
-        auto_offset_reset='earliest',
-        enable_auto_commit=True
-    )
-    
-    for message in consumer:
-        print(f"Received message: {message.value}")  # Log each message to inspect its structure
-        message_queue.put(message.value)  # Store the message in the queue
-
-# Start the consumer in a background thread
-threading.Thread(target=consume_messages, daemon=True).start()
 
 # API endpoint to get cleaned weather data
 @app.route('/weather', methods=['GET'])
@@ -69,12 +48,24 @@ def start_stream():
 # API endpoint for live updates (Kafka Consumer)
 @app.route('/live_updates', methods=['GET'])
 def live_updates():
+    consumer = KafkaConsumer(
+        'global_weather',
+        bootstrap_servers='b-1.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092,b-2.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092',
+        #auto_offset_reset='earliest',
+        #enable_auto_commit=True,group_id='weatergroup',
+        value_deserializer=lambda x: json.loads(x.decode('utf-8'))
+    )
     updates = []
-    while not message_queue.empty():
-        updates.append(message_queue.get())
+    for message in consumer:
+        # Log each message to inspect its structure
+        print(f"Received message: {message.value}")  # Add this line to debug
+        updates.append(message.value)
+
+        # Limit the number of updates returned
+        if len(updates) >= 30:
+            break
 
     return jsonify(updates)
-
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
