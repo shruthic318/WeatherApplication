@@ -60,8 +60,8 @@ def live_updates():
         updates.append(message.value)
 
         # Limit the number of updates returned
-        if len(updates) >= 30:
-            break
+        #if len(updates) >= 30:
+        #    break
        
     return jsonify(updates)
 
