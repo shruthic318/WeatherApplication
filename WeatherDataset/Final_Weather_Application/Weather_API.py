@@ -6,6 +6,7 @@ import pandas as pd
 from kafka import KafkaProducer, KafkaConsumer
 import json
 import threading
+import queue
 
 app = Flask(__name__)
 
@@ -19,6 +20,9 @@ producer = KafkaProducer(
     bootstrap_servers='b-1.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092,b-2.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092',
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
+
+# Queue to store messages consumed from Kafka
+message_queue = queue.Queue()
 
 # Function to stream data to Kafka
 def stream_data_to_kafka():
