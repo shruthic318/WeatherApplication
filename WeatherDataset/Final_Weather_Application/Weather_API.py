@@ -1,4 +1,6 @@
 # app.py
+import os
+
 from flask import Flask, jsonify, request
 import pandas as pd
 from kafka import KafkaProducer, KafkaConsumer
@@ -8,7 +10,7 @@ import threading
 app = Flask(__name__)
 
 # Load cleaned data
-filepath="/mnt/c/Users/Admin/Downloads/OutputData/Weather_Forecast_Cleaned.csv"  # Update this path accordingly
+filepath = os.path.join(os.path.dirname(__file__), 'Weather_Forecast_Cleaned.csv')  # Update this path accordingly
 weather_data = pd.read_csv(filepath)
 
 # Kafka Producer setup
