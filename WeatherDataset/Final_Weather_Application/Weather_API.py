@@ -64,6 +64,7 @@ def live_updates():
         # Limit the number of updates returned
         if len(updates) >= 30:
             break
+        consumer.commit()
     return jsonify(updates)
 
 if __name__ == '__main__':
