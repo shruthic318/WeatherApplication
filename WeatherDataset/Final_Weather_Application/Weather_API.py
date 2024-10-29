@@ -51,8 +51,6 @@ def live_updates():
     consumer = KafkaConsumer(
         'global_weather',
         bootstrap_servers='b-1.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092,b-2.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092',
-        auto_offset_reset='earliest',group_id='weatergroup',
-        enable_auto_commit=True,
         value_deserializer=lambda x: json.loads(x.decode('utf-8'))
     )
     updates = []
@@ -64,7 +62,7 @@ def live_updates():
         # Limit the number of updates returned
         if len(updates) >= 30:
             break
-        #consumer.commit()
+       
     return jsonify(updates)
 
 if __name__ == '__main__':
