@@ -8,7 +8,7 @@ import json
 import matplotlib.pyplot as plt
 
 # API URL
-BASE_URL = 'http://127.0.0.1:5000'  # Update to your Flask API endpoint when deploying
+BASE_URL = 'http://13.50.100.253:5000'
 
 # Streamlit App Title
 st.title("Global Weather Dashboard")
