@@ -10,12 +10,13 @@ import threading
 app = Flask(__name__)
 
 # Load cleaned data
+#filepath = os.path.join(os.path.dirname(__file__), 'WeatherDataset/Data Analysis/Output/Cleaned_Data.csv')  # Update this path accordingly
 filepath = os.path.join(os.path.dirname(__file__), '..', 'Data Analysis', 'Output', 'Cleaned_Data.csv')
 weather_data = pd.read_csv(filepath)
 
 # Kafka Producer setup
 producer = KafkaProducer(
-    bootstrap_servers='localhost:9092',
+    bootstrap_servers='b-1.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092,b-2.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092',
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
@@ -49,7 +50,7 @@ def start_stream():
 def live_updates():
     consumer = KafkaConsumer(
         'global_weather',
-        bootstrap_servers='localhost:9092',
+        bootstrap_servers='b-1.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092,b-2.weathercluster.jlfyff.c2.kafka.eu-north-1.amazonaws.com:9092',
         #auto_offset_reset='earliest',
         #enable_auto_commit=False,
         value_deserializer=lambda x: json.loads(x.decode('utf-8'))
